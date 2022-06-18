@@ -49,7 +49,13 @@ const PropertyDetails = ({ propertyDetails: { price, rentFrequency, rooms, title
         <Flex flexWrap='wrap'>
           {amenities?.map((item) => (
               item?.amenities?.map((amenity) => (
-                <Text key={amenity.text} fontWeight='bold' color='blue.400' fontSize='l' p='2' bg='gray.200' m='1' borderRadius='5'>
+                  <Text
+                      key={amenity.text}
+                      fontWeight='bold'
+                      color='blue.400'
+                      fontSize='l' p='2'
+                      bg='gray.200' m='1'
+                      borderRadius='5'>
                   {amenity.text}
                 </Text>
               ))
