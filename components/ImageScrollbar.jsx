@@ -1,11 +1,26 @@
-import { useContext } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import Image from 'next/image';
 import { Box, Icon, Flex } from '@chakra-ui/react';
 import { ScrollMenu, VisibilityContext } from 'react-horizontal-scrolling-menu';
 import { FaArrowAltCircleLeft, FaArrowAltCircleRight } from 'react-icons/fa';
 
-const LeftArrow = () => {
-  const { scrollPrev } = useContext(VisibilityContext);
+export function LeftArrow () {
+  const {scrollPrev,
+    isFirstItemVisible,
+    visibleItemsWithoutSeparators,
+    initComplete
+  } = useContext(VisibilityContext);
+
+  const [disabled, setDisabled] = useState(
+    !initComplete || (initComplete && isFirstItemVisible)
+  );
+
+  useEffect(() => {
+    // NOTE: detect if whole component visible
+    if (visibleItemsWithoutSeparators.length) {
+      setDisabled(isFirstItemVisible);
+    }
+  }, [isFirstItemVisible, visibleItemsWithoutSeparators]);
 
   return (
     <Flex justifyContent='center' alignItems='center' marginRight='1'>
@@ -14,14 +29,28 @@ const LeftArrow = () => {
         onClick={() => scrollPrev()}
         fontSize='2xl'
         cursor='pointer'
-        // d={['none','none','none','block']}
+        disabled={disabled}
+        d={['none','none','none','block']}
       />
     </Flex>
   );
 }
 
-const RightArrow = () => {
-  const { scrollNext } = useContext(VisibilityContext);
+export function RightArrow() {
+  const {
+    isLastItemVisible,
+    scrollNext,
+    visibleItemsWithoutSeparators
+  } = useContext(VisibilityContext);
+
+  const [disabled, setDisabled] = useState(
+    !visibleItemsWithoutSeparators.length && isLastItemVisible
+  );
+  useEffect(() => {
+    if (visibleItemsWithoutSeparators.length) {
+      setDisabled(isLastItemVisible);
+    }
+  }, [isLastItemVisible, visibleItemsWithoutSeparators]);
 
   return (
     <Flex justifyContent='center' alignItems='center' marginLeft='1'>
@@ -30,13 +59,16 @@ const RightArrow = () => {
         onClick={() => scrollNext()}
         fontSize='2xl'
         cursor='pointer'
-        // d={['none','none','none','block']}
+        disabled={disabled}
+        d={['none','none','none','block']}
           />
     </Flex>
   );
 }
 const ImageSrollbar = ({ data }) => (
-    <ScrollMenu LeftArrow={LeftArrow} RightArrow={RightArrow} style={{ overflow: 'hidden' }} >
+  <ScrollMenu
+    LeftArrow={LeftArrow}
+    RightArrow={RightArrow}>
       {data.map((item) => (
           <Box
               key={item.id}
